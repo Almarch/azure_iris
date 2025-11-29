@@ -12,6 +12,7 @@ model_eval = ml_client.components.get(name="model_eval", label="latest")
 @pipeline()
 def iris_evaluation_pipeline(
     xy: Input,
+    archi: Input,
     compute: str,
     train_percent: float = 70,
     lr: float = 1e-3,
@@ -31,6 +32,7 @@ def iris_evaluation_pipeline(
 
     model = model_train(
         xy_train = split.outputs.xy_train,
+        archi = archi,
         lr = lr,
         epochs = epochs,
         seed_train = seed_train,
@@ -41,7 +43,8 @@ def iris_evaluation_pipeline(
 
     metrics = model_eval(
         model = model.outputs.model,
-        xy_test = split.outputs.xy_test
+        xy_test = split.outputs.xy_test,
+        archi = archi,
     )
     metrics.compute = compute
 

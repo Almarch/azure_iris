@@ -7,6 +7,9 @@ version: 1
 description: Evaluate trained model on test set and log metrics to MLflow
 
 inputs:
+  archi:
+    type: uri_file
+    description: Model architecture definition (Python file)
   model:
     type: uri_folder
     description: Trained PyTorch model
@@ -26,5 +29,6 @@ environment: azureml:iris_train@latest
 command: >-
   python model_eval.py
   --model ${{inputs.model}}
+  --archi ${{inputs.archi}}
   --xy_test ${{inputs.xy_test}}
   --metrics ${{outputs.metrics}}

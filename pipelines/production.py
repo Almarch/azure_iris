@@ -12,6 +12,7 @@ iris_evaluation_pipeline = ml_client.components.get(name="iris_evaluation_pipeli
 @pipeline()
 def iris_production_pipeline(
     data: Input,
+    archi: Input,
     compute: str,
     train_percent: float = 70,
     lr: float = 1e-3,
@@ -29,6 +30,7 @@ def iris_production_pipeline(
 
     metrics = iris_evaluation_pipeline(
         xy = xy.outputs.xy,
+        archi = archi,
         compute = compute,
         train_percent = train_percent,
         lr = lr,
@@ -40,6 +42,7 @@ def iris_production_pipeline(
 
     model = model_train(
         xy_train = xy.outputs.xy,
+        archi = archi,
         lr = lr,
         epochs = epochs,
         seed_train = seed_train,

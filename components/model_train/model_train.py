@@ -7,25 +7,8 @@ from torch.utils.data import TensorDataset, DataLoader
 import mlflow
 from pathlib import Path
 import matplotlib.pyplot as plt
-
-
-class IrisClassifier(nn.Module):
-    """Simple PyTorch neural network for Iris classification"""
-    def __init__(self):
-        super().__init__()
-        self.fc1 = nn.Linear(4, 5)
-        self.relu1 = nn.ReLU()
-        self.fc2 = nn.Linear(5, 5)
-        self.relu2 = nn.ReLU()
-        self.fc3 = nn.Linear(5, 3)
-    
-    def forward(self, x):
-        x = self.fc1(x)
-        x = self.relu1(x)
-        x = self.fc2(x)
-        x = self.relu2(x)
-        x = self.fc3(x)
-        return x
+import importlib.util
+import sys
 
 
 def main(args):
@@ -39,14 +22,20 @@ def main(args):
     
     # Start MLflow run
     mlflow.start_run()
-    
+
+    # Get model architecture
+    spec = importlib.util.spec_from_file_location("iris_model", args.archi)
+    model_module = importlib.util.module_from_spec(spec)
+    sys.modules["iris_model"] = model_module
+    spec.loader.exec_module(model_module)
+    IrisClassifier = model_module.IrisClassifier
+
     # Log hyperparameters
     mlflow.log_param("learning_rate", args.lr)
     mlflow.log_param("epochs", args.epochs)
     mlflow.log_param("batch_size", args.batch_size)
     mlflow.log_param("seed_train", args.seed_train)
-    mlflow.log_param("hidden_size", 5)
-    mlflow.log_param("architecture", "4-5-5-3")
+    mlflow.log_param("architecture", args.archi)
     
     # Load training data (NumPy arrays)
     print(f"Loading training data from: {args.xy_train}")
@@ -130,7 +119,7 @@ def main(args):
     model_path.mkdir(parents=True, exist_ok=True)
     model_file = model_path / "model.pth"
     
-    torch.save(model, model_file)
+    torch.save(model.state_dict(), model_file)
     print(f"Model (complete object) saved to: {model_file}")
     
     # Create training plot (batch-level granularity)
@@ -164,6 +153,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--xy_train", type=str, help="Path to training data")
+    parser.add_argument("--archi", type=str, help="Path to model architecture file")
     parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
     parser.add_argument("--epochs", type=int, default=10, help="Number of epochs")
     parser.add_argument("--batch_size", type=int, default=16, help="Batch size for training")

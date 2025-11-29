@@ -10,6 +10,9 @@ inputs:
   xy_train:
     type: uri_folder
     description: Training data with features and target
+  archi:
+    type: uri_file
+    description: Model architecture definition (Python file)
   lr:
     type: number
     default: 0.001
@@ -43,6 +46,7 @@ environment: azureml:iris_train@latest
 command: >-
   python model_train.py
   --xy_train ${{inputs.xy_train}}
+  --archi ${{inputs.archi}}
   --lr ${{inputs.lr}}
   --epochs ${{inputs.epochs}}
   --batch_size ${{inputs.batch_size}}

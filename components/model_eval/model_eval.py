@@ -7,7 +7,8 @@ from pathlib import Path
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+import importlib.util
+import sys
 
 def main(args):
     """
@@ -17,6 +18,13 @@ def main(args):
     
     # Start MLflow run
     mlflow.start_run()
+
+    # Get model architecture
+    spec = importlib.util.spec_from_file_location("iris_model", args.archi)
+    model_module = importlib.util.module_from_spec(spec)
+    sys.modules["iris_model"] = model_module
+    spec.loader.exec_module(model_module)
+    IrisClassifier = model_module.IrisClassifier
     
     # Load test data (NumPy arrays)
     print(f"Loading test data from: {args.xy_test}")
@@ -27,11 +35,12 @@ def main(args):
     
     # Convert to PyTorch tensors
     X_test_tensor = torch.FloatTensor(X_test)
-    
-    # Load trained model (complete object)
+
+    # Load trained model
     print(f"Loading model from: {args.model}")
     model_path = Path(args.model) / "model.pth"
-    model = torch.load(model_path, weights_only=False)
+    model = IrisClassifier()
+    model.load_state_dict(torch.load(model_path, weights_only=True))
     model.eval()
     
     print("Model loaded successfully")
@@ -104,6 +113,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, help="Path to trained model")
+    parser.add_argument("--archi", type=str, help="Path to model architecture file")
     parser.add_argument("--xy_test", type=str, help="Path to test data")
     parser.add_argument("--metrics", type=str, help="Output metrics path")
     
