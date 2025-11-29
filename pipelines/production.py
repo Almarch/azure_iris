@@ -15,7 +15,7 @@ def iris_production_pipeline(
     compute: str,
     train_percent: float = 70,
     lr: float = 1e-3,
-    epochs: int = 10,
+    epochs: int = 50,
     batch_size: int = 16,
     seed_split: int = 42,
     seed_train: int = 42,

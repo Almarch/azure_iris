@@ -31,7 +31,7 @@ def main(args):
     # Load trained model (complete object)
     print(f"Loading model from: {args.model}")
     model_path = Path(args.model) / "model.pth"
-    model = torch.load(model_path)
+    model = torch.load(model_path, weights_only=False)
     model.eval()
     
     print("Model loaded successfully")

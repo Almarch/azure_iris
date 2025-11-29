@@ -153,7 +153,7 @@ def main(args):
     print(f"Training curves saved to: {plot_path}")
     
     # Log to MLflow
-    if log_model:
+    if args.log_model:
         mlflow.log_artifact(str(plot_path))
         mlflow.pytorch.log_model(model, "model")
     
@@ -168,7 +168,7 @@ if __name__ == "__main__":
     parser.add_argument("--epochs", type=int, default=10, help="Number of epochs")
     parser.add_argument("--batch_size", type=int, default=16, help="Batch size for training")
     parser.add_argument("--seed_train", type=int, default=42, help="Random seed for reproducibility")
-    parser.add_argument("--log_model", type=int, default=False, help="Whether to log model to MLflow")
+    parser.add_argument("--log_model", type=bool, default=False, help="Whether to log model to MLflow")
     parser.add_argument("--model", type=str, help="Output model path")
     
     args = parser.parse_args()
