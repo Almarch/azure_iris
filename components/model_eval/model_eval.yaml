@@ -13,6 +13,9 @@ inputs:
   model:
     type: uri_folder
     description: Trained PyTorch model
+  scaler:
+    type: uri_folder
+    description: Scaler parameters for inference
   xy_test:
     type: uri_folder
     description: Test data with features and target
@@ -29,6 +32,7 @@ environment: azureml:iris_train@latest
 command: >-
   python model_eval.py
   --model ${{inputs.model}}
+  --scaler ${{inputs.scaler}}
   --archi ${{inputs.archi}}
   --xy_test ${{inputs.xy_test}}
   --metrics ${{outputs.metrics}}

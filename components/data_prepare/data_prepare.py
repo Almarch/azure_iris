@@ -2,10 +2,8 @@ import argparse
 import pandas as pd
 import numpy as np
 import mltable
-import joblib
 import json
 from pathlib import Path
-from sklearn.preprocessing import StandardScaler
 
 
 def main(args):
@@ -39,14 +37,7 @@ def main(args):
     print(f"\nOriginal feature statistics:")
     print(pd.DataFrame(X, columns=feature_columns).describe())
     
-    # Fit scaler and transform features
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-    
-    print(f"\nScaled feature statistics:")
-    print(pd.DataFrame(X_scaled, columns=feature_columns).describe())
-    
-    print(f"\nPrepared data: {X_scaled.shape[0]} samples, {len(feature_columns)} features")
+    print(f"\nPrepared data: {X.shape[0]} samples, {len(feature_columns)} features")
     print(f"Target distribution: {np.bincount(y)}")
     
     # Save prepared data as NumPy arrays
@@ -56,24 +47,11 @@ def main(args):
     X_file = xy_path / "X.npy"
     y_file = xy_path / "y.npy"
     
-    np.save(X_file, X_scaled)
+    np.save(X_file, X)
     np.save(y_file, y)
     
     print(f"X saved to: {X_file}")
     print(f"y saved to: {y_file}")
-    
-    # Save scaler
-    scaler_path = Path(args.scaler)
-    scaler_path.mkdir(parents=True, exist_ok=True)
-    
-    scaler_file = scaler_path / "scaler.pkl"
-    joblib.dump(scaler, scaler_file)
-    print(f"\nScaler saved to: {scaler_file}")
-    
-    # Print scaler parameters
-    print(f"\nScaler parameters:")
-    for feature, mean, std in zip(feature_columns, scaler.mean_, scaler.scale_):
-        print(f"  {feature}: mean={mean:.4f}, std={std:.4f}")
     
     # Save label mapping
     mapping_path = Path(args.mapping)
@@ -92,12 +70,10 @@ def main(args):
     print(f"Label mapping saved to: {mapping_file}")
     print(f"\nMapping: {species_mapping}")
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", type=str, help="Input MLTable path")
     parser.add_argument("--xy", type=str, help="Output prepared data path")
-    parser.add_argument("--scaler", type=str, help="Output scaler path")
     parser.add_argument("--mapping", type=str, help="Output label mapping path")
     
     args = parser.parse_args()

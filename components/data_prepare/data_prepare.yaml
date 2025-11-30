@@ -15,9 +15,6 @@ outputs:
   xy:
     type: uri_folder
     description: Prepared and normalized data (X.npy, y.npy)
-  scaler:
-    type: uri_folder
-    description: Scaler parameters for inference
   mapping:
     type: uri_folder
     description: Label mapping (species names to IDs and reverse)
@@ -30,5 +27,4 @@ command: >-
   python data_prepare.py
   --data ${{inputs.data}}
   --xy ${{outputs.xy}}
-  --scaler ${{outputs.scaler}}
   --mapping ${{outputs.mapping}}

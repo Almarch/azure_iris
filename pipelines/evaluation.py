@@ -43,6 +43,7 @@ def iris_evaluation_pipeline(
 
     metrics = model_eval(
         model = model.outputs.model,
+        scaler = model.outputs.scaler,
         xy_test = split.outputs.xy_test,
         archi = archi,
     )

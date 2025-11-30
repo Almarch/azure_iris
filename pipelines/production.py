@@ -54,7 +54,7 @@ def iris_production_pipeline(
     return {
         "model": model.outputs.model,
         "metrics": metrics.outputs.metrics,
-        "scaler": xy.outputs.scaler,
+        "scaler": model.outputs.scaler,
         "mapping": xy.outputs.mapping,
     }
 

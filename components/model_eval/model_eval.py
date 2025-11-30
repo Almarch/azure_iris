@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import importlib.util
 import sys
+import joblib
 
 def main(args):
     """
@@ -32,9 +33,15 @@ def main(args):
     y_test = np.load(Path(args.xy_test) / "y.npy")
     
     print(f"Test set: {len(y_test)} samples, {X_test.shape[1]} features")
+
+    # Load scaler
+    scaler_file = Path(args.scaler) / "scaler.pkl"
+    scaler = joblib.load(scaler_file)
+    print(f"Scaler loaded from: {scaler_file}")
     
     # Convert to PyTorch tensors
-    X_test_tensor = torch.FloatTensor(X_test)
+    X_scaled = scaler.transform(X_test)
+    X_test_tensor = torch.FloatTensor(X_scaled)
 
     # Load trained model
     print(f"Loading model from: {args.model}")
@@ -113,6 +120,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, help="Path to trained model")
+    parser.add_argument("--scaler", type=str, help="Path to the scaler")
     parser.add_argument("--archi", type=str, help="Path to model architecture file")
     parser.add_argument("--xy_test", type=str, help="Path to test data")
     parser.add_argument("--metrics", type=str, help="Output metrics path")

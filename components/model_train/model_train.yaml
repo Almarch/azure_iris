@@ -38,6 +38,9 @@ outputs:
   model:
     type: uri_folder
     description: Trained PyTorch model
+  scaler:
+    type: uri_folder
+    description: Scaler parameters for inference
 
 code: .
 
@@ -53,3 +56,4 @@ command: >-
   --seed_train ${{inputs.seed_train}}
   --log_model ${{inputs.log_model}}
   --model ${{outputs.model}}
+  --scaler ${{outputs.scaler}}

@@ -9,7 +9,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import importlib.util
 import sys
-
+import joblib
+from sklearn.preprocessing import StandardScaler
 
 def main(args):
     """
@@ -41,12 +42,16 @@ def main(args):
     print(f"Loading training data from: {args.xy_train}")
     X_train = np.load(Path(args.xy_train) / "X.npy")
     y_train = np.load(Path(args.xy_train) / "y.npy")
-    
+
     print(f"Training set: {len(y_train)} samples, {X_train.shape[1]} features")
     print(f"Target distribution:\n{np.bincount(y_train)}")
     
+    # Fit scaler and transform features
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X_train)
+    
     # Convert to PyTorch tensors
-    X_train_tensor = torch.FloatTensor(X_train)
+    X_train_tensor = torch.FloatTensor(X_scaled)
     y_train_tensor = torch.LongTensor(y_train)
     
     # Create DataLoader
@@ -121,6 +126,19 @@ def main(args):
     
     torch.save(model.state_dict(), model_file)
     print(f"Model (complete object) saved to: {model_file}")
+
+    # Save scaler
+    scaler_path = Path(args.scaler)
+    scaler_path.mkdir(parents=True, exist_ok=True)
+    
+    scaler_file = scaler_path / "scaler.pkl"
+    joblib.dump(scaler, scaler_file)
+    print(f"\nScaler saved to: {scaler_file}")
+    
+    # Print scaler parameters
+    print(f"\nScaler parameters:")
+    for mean, std in zip(scaler.mean_, scaler.scale_):
+        print(f"mean={mean:.4f}, std={std:.4f}")
     
     # Create training plot (batch-level granularity)
     _, ax1 = plt.subplots(figsize=(6, 3))
@@ -160,6 +178,7 @@ if __name__ == "__main__":
     parser.add_argument("--seed_train", type=int, default=42, help="Random seed for reproducibility")
     parser.add_argument("--log_model", type=bool, default=False, help="Whether to log model to MLflow")
     parser.add_argument("--model", type=str, help="Output model path")
+    parser.add_argument("--scaler", type=str, help="Output scaler path")
     
     args = parser.parse_args()
     main(args)
