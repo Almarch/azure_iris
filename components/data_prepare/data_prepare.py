@@ -4,6 +4,7 @@ import numpy as np
 import mltable
 import json
 from pathlib import Path
+import mlflow
 
 
 def main(args):
@@ -66,6 +67,8 @@ def main(args):
     
     with open(mapping_file, "w") as f:
         json.dump(mapping_data, f, indent=2)
+    
+    mlflow.log_artifact(mapping_file, artifact_path="mapping")
     
     print(f"Label mapping saved to: {mapping_file}")
     print(f"\nMapping: {species_mapping}")

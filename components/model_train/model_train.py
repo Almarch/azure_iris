@@ -134,6 +134,9 @@ def main(args):
     scaler_file = scaler_path / "scaler.pkl"
     joblib.dump(scaler, scaler_file)
     print(f"\nScaler saved to: {scaler_file}")
+
+    if args.log_model:
+        mlflow.log_artifact(scaler_file, artifact_path="scaler")
     
     # Print scaler parameters
     print(f"\nScaler parameters:")
