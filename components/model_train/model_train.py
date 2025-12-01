@@ -162,7 +162,11 @@ def main(args):
     # Log to MLflow
     if args.log_model:
         mlflow.log_artifact(str(plot_path))
-        mlflow.pytorch.log_model(model, "model")
+        mlflow.pytorch.log_model(
+            pytorch_model=model, 
+            artifact_path="model",
+            registered_model_name="iris-model"
+        )
     
     mlflow.end_run()
     print("Training pipeline completed successfully!")
