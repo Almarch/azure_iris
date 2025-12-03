@@ -6,12 +6,12 @@ The goal of this project is to set-up a classifier pipeline for Fisher's iris, u
 
 ## 🛠️ Production Pipeline
 
-<img width="1231" height="563" alt="prod_pipeline" src="https://github.com/user-attachments/assets/4de4bda1-0eb4-4b9e-829d-d8f06943fa15" />
-
+<img width="914" height="568" alt="image" src="https://github.com/user-attachments/assets/00530f9b-5473-4567-a305-19efc1e968ac" />
 
 ## 📊 Evaluation Pipeline
 
-<img width="1035" height="490" alt="image" src="https://github.com/user-attachments/assets/d4c4e54d-652f-49df-997b-7e4008ddd0df" />
+<img width="928" height="609" alt="image" src="https://github.com/user-attachments/assets/decc7216-daf9-423c-b2d0-4d75a9ded258" />
+
 
 
 
