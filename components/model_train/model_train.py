@@ -25,9 +25,9 @@ def main(args):
     mlflow.start_run()
 
     # Get model architecture
-    spec_archi = importlib.util.spec_from_file_location("iris_architecture", args.archi)
+    spec_archi = importlib.util.spec_from_file_location("IrisArchitecture", args.archi)
     archi_module = importlib.util.module_from_spec(spec_archi)
-    sys.modules["iris_architecture"] = archi_module
+    sys.modules["IrisArchitecture"] = archi_module
     spec_archi.loader.exec_module(archi_module)
     IrisArchitecture = archi_module.IrisArchitecture
 

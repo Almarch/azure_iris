@@ -2,3 +2,5 @@
 *.amltmp
 *-checkpoint*
 *.pyc
+.env
+downloaded_*

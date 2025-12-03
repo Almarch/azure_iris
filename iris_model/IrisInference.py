@@ -2,8 +2,7 @@ from mlflow.pyfunc import PythonModel
 import torch
 import joblib
 import json
-import importlib.util
-import sys
+from IrisArchitecture import IrisArchitecture
 
 class IrisInference(PythonModel):
     
@@ -13,20 +12,13 @@ class IrisInference(PythonModel):
         It loads the PyTorch model architecture, the trained weights, the scaler, 
         and the label mapping from the MLflow artifacts.
         """
-
-        # 1. Load the PyTorch Model Architecture
-        spec_arch = importlib.util.spec_from_file_location("iris_arch", context.artifacts["archi"])
-        arch_module = importlib.util.module_from_spec(spec_arch)
-        sys.modules["iris_arch"] = arch_module
-        spec_arch.loader.exec_module(arch_module)
-        IrisArchitecture = arch_module.IrisArchitecture
-
-        # 2. Instantiate the architecture and load the trained weights
+        
+        # Load model
         self.model = IrisArchitecture() 
         self.model.load_state_dict(torch.load(context.artifacts["model"], weights_only=True))
         self.model.eval()
 
-        # 3. Load preprocessing and postprocessing artifacts
+        # 3. Load other artifacts
         self.scaler = joblib.load(context.artifacts["scaler"])
         mapping = json.load(open(context.artifacts["mapping"], 'r'))
 

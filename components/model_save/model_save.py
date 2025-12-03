@@ -13,16 +13,16 @@ def main(args):
     # Start MLflow run
     mlflow.start_run()
 
-    # Get model architecture
-    spec_archi = importlib.util.spec_from_file_location("iris_architecture", args.archi)
+    # Get archi (needed for inference)
+    spec_archi = importlib.util.spec_from_file_location("IrisArchitecture", args.archi)
     archi_module = importlib.util.module_from_spec(spec_archi)
-    sys.modules["iris_architecture"] = archi_module
+    sys.modules["IrisArchitecture"] = archi_module
     spec_archi.loader.exec_module(archi_module)
 
     # Get inference class
-    spec_infer = importlib.util.spec_from_file_location("iris_inference", args.infer)
+    spec_infer = importlib.util.spec_from_file_location("IrisInference", args.infer)
     infer_module = importlib.util.module_from_spec(spec_infer)
-    sys.modules["iris_inference"] = infer_module
+    sys.modules["IrisInference"] = infer_module
     spec_infer.loader.exec_module(infer_module)
     IrisInference = infer_module.IrisInference
 
@@ -30,7 +30,6 @@ def main(args):
         "model": str(Path(args.model) / "model.pth"),
         "scaler": str(Path(args.scaler) / "scaler.pkl"),
         "mapping": str(Path(args.mapping) / "mapping.json"),
-        "archi": args.archi,
     }
 
     mlflow.pyfunc.log_model(
